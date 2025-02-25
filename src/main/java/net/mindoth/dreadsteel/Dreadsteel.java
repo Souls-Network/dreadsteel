@@ -1,84 +1,70 @@
 package net.mindoth.dreadsteel;
 
 import net.mindoth.dreadsteel.config.DreadsteelCommonConfig;
+import net.mindoth.dreadsteel.item.armor.DreadsteelArmor;
 import net.mindoth.dreadsteel.message.MessageSwingArm;
 import net.mindoth.dreadsteel.registries.DreadsteelEntities;
 import net.mindoth.dreadsteel.registries.DreadsteelItems;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadHandler;
 
 @Mod(Dreadsteel.MOD_ID)
 public class Dreadsteel {
 
     //public static SidedProxy proxy = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
     public static final String MOD_ID = "dreadsteel";
-    public static final SimpleChannel NETWORK_WRAPPER;
     private static final String PROTOCOL_VERSION = Integer.toString(1);
-    private static int packetsRegistered = 0;
 
-    public Dreadsteel() {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        if ( FMLEnvironment.dist == Dist.CLIENT ) {
-            DreadsteelClient.registerHandlers();
-        }
+    public Dreadsteel(IEventBus modEventBus, ModContainer container) {
         DreadsteelItems.register(modEventBus);
         addRegistries(modEventBus);
         modEventBus.addListener(this::setup);
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, DreadsteelCommonConfig.SPEC, "dreadsteel-common.toml");
+        container.registerConfig(ModConfig.Type.COMMON, DreadsteelCommonConfig.SPEC, "dreadsteel-common.toml");
     }
 
     private void addRegistries(final IEventBus modEventBus) {
         DreadsteelEntities.ENTITIES.register(modEventBus);
+        DreadsteelArmor.MaterialDreadsteel.init(modEventBus);
         modEventBus.addListener(this::addCreative);
     }
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
         if ( event.getTabKey() == CreativeModeTabs.COMBAT ) {
-            event.accept(DreadsteelItems.DREADSTEEL_HELMET);
-            event.accept(DreadsteelItems.DREADSTEEL_CHESTPLATE);
-            event.accept(DreadsteelItems.DREADSTEEL_LEGGINGS);
-            event.accept(DreadsteelItems.DREADSTEEL_BOOTS);
-            event.accept(DreadsteelItems.DREADSTEEL_SCYTHE);
-            event.accept(DreadsteelItems.DREADSTEEL_SHIELD);
+            event.accept(DreadsteelItems.DREADSTEEL_HELMET.get());
+            event.accept(DreadsteelItems.DREADSTEEL_CHESTPLATE.get());
+            event.accept(DreadsteelItems.DREADSTEEL_LEGGINGS.get());
+            event.accept(DreadsteelItems.DREADSTEEL_BOOTS.get());
+            event.accept(DreadsteelItems.DREADSTEEL_SCYTHE.get());
+            event.accept(DreadsteelItems.DREADSTEEL_SHIELD.get());
         }
         if ( event.getTabKey() == CreativeModeTabs.INGREDIENTS ) {
-            event.accept(DreadsteelItems.DREADSTEEL_INGOT);
-            event.accept(DreadsteelItems.DEFAULT_KIT);
-            event.accept(DreadsteelItems.WHITE_KIT);
-            event.accept(DreadsteelItems.BLACK_KIT);
-            event.accept(DreadsteelItems.BRONZE_KIT);
+            event.accept(DreadsteelItems.DREADSTEEL_INGOT.get());
+            event.accept(DreadsteelItems.DEFAULT_KIT.get());
+            event.accept(DreadsteelItems.WHITE_KIT.get());
+            event.accept(DreadsteelItems.BLACK_KIT.get());
+            event.accept(DreadsteelItems.BRONZE_KIT.get());
         }
     }
 
-    static {
-        NetworkRegistry.ChannelBuilder channel = NetworkRegistry.ChannelBuilder.named(new ResourceLocation("dreadsteel", "main_channel"));
-        String version = PROTOCOL_VERSION;
-        version.getClass();
-        channel = channel.clientAcceptedVersions(version::equals);
-        version = PROTOCOL_VERSION;
-        version.getClass();
-        NETWORK_WRAPPER = channel.serverAcceptedVersions(version::equals).networkProtocolVersion(() -> {
-            return PROTOCOL_VERSION;
-        }).simpleChannel();
+    public static <MSG extends CustomPacketPayload> void sendMSGToServer(MSG message) {
+        PacketDistributor.sendToServer(message);
     }
 
-    public static <MSG> void sendMSGToServer(MSG message) {
-        NETWORK_WRAPPER.sendToServer(message);
-    }
-
-    private void setup(final FMLCommonSetupEvent event) {
-        NETWORK_WRAPPER.registerMessage(packetsRegistered++, MessageSwingArm.class, MessageSwingArm::encode, MessageSwingArm::decode, MessageSwingArm.Handler::handle);
+    private void setup(final RegisterPayloadHandlersEvent event) {
+        event.registrar(PROTOCOL_VERSION).playToServer(MessageSwingArm.TYPE, MessageSwingArm.STREAM_CODEC, MessageSwingArm::handle);
     }
 }

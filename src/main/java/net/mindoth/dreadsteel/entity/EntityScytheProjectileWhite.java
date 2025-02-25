@@ -16,8 +16,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.network.PlayMessages;
 
 public class EntityScytheProjectileWhite extends AbstractArrow {
 
@@ -33,22 +31,13 @@ public class EntityScytheProjectileWhite extends AbstractArrow {
     }
 
     public EntityScytheProjectileWhite(EntityType<? extends AbstractArrow> type, Level worldIn, LivingEntity shooter, double dmg) {
-        super(type, shooter, worldIn);
+        super(type, shooter, worldIn, ItemStack.EMPTY, null);
         this.setBaseDamage(dmg);
-    }
-
-    public EntityScytheProjectileWhite(PlayMessages.SpawnEntity spawnEntity, Level worldIn) {
-        this(DreadsteelEntities.SCYTHE_PROJECTILE_WHITE.get(), worldIn);
     }
 
     @Override
     public boolean isInWater() {
         return false;
-    }
-
-    @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
     }
 
     @Override
@@ -107,7 +96,7 @@ public class EntityScytheProjectileWhite extends AbstractArrow {
     }
 
     @Override
-    public Packet getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
+    protected ItemStack getDefaultPickupItem() {
+        return ItemStack.EMPTY;
     }
 }

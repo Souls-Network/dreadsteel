@@ -15,7 +15,7 @@ public class ModelHandler {
     }
 
     public static void makeShield(Item item) {
-        addShieldPropertyOverrides(new ResourceLocation(Dreadsteel.MOD_ID, "blocking"),
+        addShieldPropertyOverrides(ResourceLocation.fromNamespaceAndPath(Dreadsteel.MOD_ID, "blocking"),
                 (stack, world, entity, seed) -> entity != null && entity.isUsingItem()
                         && entity.getUseItem() == stack ? 1.0F : 0.0F, DreadsteelItems.DREADSTEEL_SHIELD.get());
     }

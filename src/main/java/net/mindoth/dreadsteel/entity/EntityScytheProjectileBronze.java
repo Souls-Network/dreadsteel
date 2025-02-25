@@ -5,6 +5,7 @@ import net.mindoth.dreadsteel.registries.DreadsteelEntities;
 import net.mindoth.shadowizardlib.event.ShadowEvents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
@@ -16,8 +17,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.network.PlayMessages;
 
 public class EntityScytheProjectileBronze extends AbstractArrow {
 
@@ -33,22 +32,17 @@ public class EntityScytheProjectileBronze extends AbstractArrow {
     }
 
     public EntityScytheProjectileBronze(EntityType<? extends AbstractArrow> type, Level LevelIn, LivingEntity shooter, double dmg) {
-        super(type, shooter, LevelIn);
+        super(type, shooter, LevelIn, ItemStack.EMPTY, null);
         this.setBaseDamage(dmg);
     }
 
-    public EntityScytheProjectileBronze(PlayMessages.SpawnEntity spawnEntity, Level LevelIn) {
-        this(DreadsteelEntities.SCYTHE_PROJECTILE_BRONZE.get(), LevelIn);
-    }
+//    public EntityScytheProjectileBronze(PlayMessages.SpawnEntity spawnEntity, Level LevelIn) {
+//        this(DreadsteelEntities.SCYTHE_PROJECTILE_BRONZE.get(), LevelIn);
+//    }
 
     @Override
     public boolean isInWater() {
         return false;
-    }
-
-    @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
     }
 
     @Override
@@ -107,7 +101,13 @@ public class EntityScytheProjectileBronze extends AbstractArrow {
     }
 
     @Override
-    public Packet getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
+    protected ItemStack getDefaultPickupItem() {
+        return ItemStack.EMPTY;
     }
+
+//    @Override
+//    public Packet getAddEntityPacket() {
+//        super.pac
+//        return NetworkHooks.getEntitySpawningPacket(this);
+//    }
 }
