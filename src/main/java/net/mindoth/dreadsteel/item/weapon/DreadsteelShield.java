@@ -14,16 +14,16 @@ import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.DispenserBlock;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Mod.EventBusSubscriber(modid = Dreadsteel.MOD_ID)
+@EventBusSubscriber(modid = Dreadsteel.MOD_ID)
 public class DreadsteelShield extends ShieldItem {
 
     public DreadsteelShield() {
@@ -43,13 +43,13 @@ public class DreadsteelShield extends ShieldItem {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
         tooltip.add(Component.translatable("tooltip.dreadsteel.dreadsteel_shield"));
-        super.appendHoverText(stack, world, tooltip, flagIn);
+        super.appendHoverText(stack, context, tooltip, flagIn);
     }
 
     @SubscribeEvent
-    public static void onArrowHit(final LivingAttackEvent event) {
+    public static void onArrowHit(final LivingIncomingDamageEvent event) {
         if ( event.getEntity() instanceof Player) {
             Player player = (Player)event.getEntity();
             Level world = player.level();
@@ -76,7 +76,7 @@ public class DreadsteelShield extends ShieldItem {
                 }
                 //Set melee attackers on fire
                 if ( event.getSource().getDirectEntity() instanceof LivingEntity) {
-                    event.getSource().getDirectEntity().setSecondsOnFire(5);
+                    event.getSource().getDirectEntity().setRemainingFireTicks(5);
                 }
             }
         }

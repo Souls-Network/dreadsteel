@@ -1,36 +1,32 @@
 package net.mindoth.dreadsteel.message;
 
+import net.mindoth.dreadsteel.Dreadsteel;
 import net.mindoth.dreadsteel.item.weapon.DreadsteelScythe;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.function.Supplier;
 
-public class MessageSwingArm {
+public enum MessageSwingArm implements CustomPacketPayload {
+    INSTANCE;
 
-    public MessageSwingArm() {
+    public static final Type<MessageSwingArm> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Dreadsteel.MOD_ID, "swing_arm"));
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, MessageSwingArm> STREAM_CODEC = StreamCodec.unit(INSTANCE);
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
-    public static class Handler {
-        public Handler() {
-        }
-
-        public static void handle(MessageSwingArm message, Supplier<NetworkEvent.Context> context) {
-            context.get().setPacketHandled(true);
-            Player player = context.get().getSender();
-            if ( player != null ) {
-                DreadsteelScythe.onLeftClick(player, player.getItemInHand(InteractionHand.MAIN_HAND));
-            }
-        }
-    }
-
-
-    public static MessageSwingArm decode(FriendlyByteBuf buf) {
-        return new MessageSwingArm();
-    }
-
-    public static void encode(MessageSwingArm message, FriendlyByteBuf buf) {
+    public void handle(IPayloadContext context) {
+        Player player = context.player();
+        DreadsteelScythe.onLeftClick(player, player.getItemInHand(InteractionHand.MAIN_HAND));
     }
 }

@@ -1,8 +1,11 @@
 package net.mindoth.dreadsteel.item.weapon;
 
 import net.mindoth.dreadsteel.registries.DreadsteelItems;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.Block;
 
 import java.util.function.Supplier;
 
@@ -43,8 +46,8 @@ public enum DreadsteelTier implements Tier {
     }
 
     @Override
-    public int getLevel() {
-        return this.level;
+    public TagKey<Block> getIncorrectBlocksForDrops() {
+        return BlockTags.INCORRECT_FOR_DIAMOND_TOOL;
     }
 
     @Override

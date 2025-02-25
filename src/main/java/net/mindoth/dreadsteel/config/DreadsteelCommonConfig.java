@@ -1,19 +1,19 @@
 package net.mindoth.dreadsteel.config;
 
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class DreadsteelCommonConfig {
-    public static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
-    public static final ForgeConfigSpec SPEC;
+    public static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
+    public static final ModConfigSpec SPEC;
 
-    public static final ForgeConfigSpec.ConfigValue<Integer> HELMET_ARMOR;
-    public static final ForgeConfigSpec.ConfigValue<Integer> CHESTPLATE_ARMOR;
-    public static final ForgeConfigSpec.ConfigValue<Integer> LEGGINGS_ARMOR;
-    public static final ForgeConfigSpec.ConfigValue<Integer> BOOTS_ARMOR;
-    public static final ForgeConfigSpec.ConfigValue<Integer> ARMOR_TOUGHNESS;
-    public static final ForgeConfigSpec.ConfigValue<Double> ARMOR_KNOCKBACK_RESISTANCE;
-    public static final ForgeConfigSpec.ConfigValue<Integer> SCYTHE_DAMAGE;
-    public static final ForgeConfigSpec.ConfigValue<Double> SCYTHE_SPEED;
+    public static final ModConfigSpec.ConfigValue<Integer> HELMET_ARMOR;
+    public static final ModConfigSpec.ConfigValue<Integer> CHESTPLATE_ARMOR;
+    public static final ModConfigSpec.ConfigValue<Integer> LEGGINGS_ARMOR;
+    public static final ModConfigSpec.ConfigValue<Integer> BOOTS_ARMOR;
+    public static final ModConfigSpec.ConfigValue<Integer> ARMOR_TOUGHNESS;
+    public static final ModConfigSpec.ConfigValue<Double> ARMOR_KNOCKBACK_RESISTANCE;
+    public static final ModConfigSpec.ConfigValue<Integer> SCYTHE_DAMAGE;
+    public static final ModConfigSpec.ConfigValue<Double> SCYTHE_SPEED;
 
     static {
         BUILDER.push("Configs for Dreadsteel");
